@@ -196,7 +196,10 @@ if (
 // Active navigation link
 const sections = $$('.section-anchor');
 const dockLinks = $$('.dock a');
-
+<a href="#certifications">
+  <span aria-hidden="true">◇</span>
+  <span>Certifications</span>
+</a>
 if ('IntersectionObserver' in window) {
   const active = new IntersectionObserver(entries => {
     entries.forEach(entry => {
