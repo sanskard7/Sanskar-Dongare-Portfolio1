@@ -44,6 +44,7 @@ const projectData = {
   }
 };
 
+// Project modal
 const modal = $('#modal');
 
 if (modal) {
@@ -84,7 +85,10 @@ const toast = $('.toast');
 let toastTimer;
 
 function showToast(message) {
-  if (!toast) return;
+  if (!toast) {
+    alert(message);
+    return;
+  }
 
   toast.textContent = message;
   toast.classList.add('show');
@@ -96,21 +100,26 @@ function showToast(message) {
   }, 3500);
 }
 
-// CONTACT FORM - FIXED
+// CONTACT FORM - GMAIL COMPOSE FIX
 const contactForm = $('#contact-form');
 
 if (contactForm) {
   contactForm.addEventListener('submit', e => {
     e.preventDefault();
 
-    const nameInput = $('#contact-name');
-    const emailInput = $('#contact-email');
-    const messageInput = $('#contact-message');
+    // Match the field IDs in your HTML
+    const nameInput =
+      $('#contact-name') || $('#name');
 
-    // Check that the HTML IDs match
+    const emailInput =
+      $('#contact-email') || $('#email');
+
+    const messageInput =
+      $('#contact-message') || $('#message');
+
     if (!nameInput || !emailInput || !messageInput) {
-      showToast('Contact form fields could not be found. Please check index.html.');
-      console.error('Expected IDs: contact-name, contact-email, contact-message');
+      showToast('Contact fields not found. Please check index.html.');
+      console.error('Check your contact form field IDs.');
       return;
     }
 
@@ -119,32 +128,45 @@ if (contactForm) {
     const message = messageInput.value.trim();
 
     if (!name || !email || !message) {
-      showToast('Please fill in all fields.');
-      contactForm.reportValidity();
+      showToast('Please fill in all three fields.');
       return;
     }
 
     if (!emailInput.checkValidity()) {
       showToast('Please enter a valid email address.');
-      emailInput.reportValidity();
+      emailInput.focus();
       return;
     }
 
+    const recipient = 'sanskardongare7@gmail.com';
+
     const subject = encodeURIComponent(
-      `Portfolio message from ${name}`
+      'Portfolio message from ' + name
     );
 
     const body = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
+      'Name: ' + name + '\n' +
+      'Email: ' + email + '\n\n' +
+      'Message:\n' + message
     );
 
-    const mailtoURL =
-      `mailto:sanskardongare7@gmail.com?subject=${subject}&body=${body}`;
+    const gmailURL =
+      'https://mail.google.com/mail/?view=cm&fs=1' +
+      '&to=' + encodeURIComponent(recipient) +
+      '&su=' + subject +
+      '&body=' + body;
 
-    showToast('Opening your email app...');
+    // Open Gmail Compose in a new tab
+    const gmailTab = window.open(gmailURL, '_blank');
 
-    // Open a draft in the visitor's email application
-    window.location.href = mailtoURL;
+    if (gmailTab) {
+      showToast('Gmail Compose opened. Review and send your message.');
+    } else {
+      // Fallback if Chrome blocks the new tab
+      showToast('Opening Gmail in this tab...');
+
+      window.location.href = gmailURL;
+    }
   });
 }
 
